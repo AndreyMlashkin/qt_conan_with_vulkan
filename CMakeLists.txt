@@ -32,11 +32,11 @@ set_target_properties(hellovulkantriangle PROPERTIES
     MACOSX_BUNDLE TRUE
 )
 
-#conan_target_link_libraries(hellovulkantriangle)
+conan_target_link_libraries(hellovulkantriangle)
 
-target_link_libraries(hellovulkantriangle PUBLIC
-CONAN_PKG::qt CONAN_LIB::vulkan-loader_vulkan
-)
+#target_link_libraries(hellovulkantriangle PUBLIC
+#CONAN_PKG::qt CONAN_LIB::vulkan-loader_vulkan
+#)
 
 
 # Resources:
