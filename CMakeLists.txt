@@ -8,8 +8,9 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-include(${CMAKE_BINARY_DIR}/conan-dependencies/conanbuildinfo.cmake)
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(TARGETS)
+list(APPEND CMAKE_PREFIX_PATH ${CMAKE_BINARY_DIR})
 
 message(CONAN_TARGETS: ${CONAN_TARGETS})
 
@@ -19,8 +20,7 @@ endif()
 
 set(INSTALL_EXAMPLEDIR "${INSTALL_EXAMPLESDIR}/vulkan/hellovulkantriangle")
 
-find_package(Qt6 COMPONENTS Core)
-find_package(Qt6 COMPONENTS Gui)
+find_package(Qt6 COMPONENTS Gui REQUIRED CONFIG)
 find_package(Vulkan REQUIRED)
 
 qt_add_executable(hellovulkantriangle
@@ -35,7 +35,7 @@ set_target_properties(hellovulkantriangle PROPERTIES
 #conan_target_link_libraries(hellovulkantriangle)
 
 target_link_libraries(hellovulkantriangle PUBLIC
-Qt6::Core Qt6::Gui CONAN_LIB::vulkan-loader_vulkan
+CONAN_PKG::qt CONAN_LIB::vulkan-loader_vulkan
 )
 
 
