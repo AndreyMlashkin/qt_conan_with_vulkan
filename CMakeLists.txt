@@ -32,6 +32,8 @@ set_target_properties(hellovulkantriangle PROPERTIES
     MACOSX_BUNDLE TRUE
 )
 
+#conan_target_link_libraries(hellovulkantriangle)
+
 target_link_libraries(hellovulkantriangle PUBLIC
 Qt6::Core Qt6::Gui CONAN_LIB::vulkan-loader_vulkan
 )
