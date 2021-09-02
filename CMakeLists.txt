@@ -23,7 +23,7 @@ set(INSTALL_EXAMPLEDIR "${INSTALL_EXAMPLESDIR}/vulkan/hellovulkantriangle")
 find_package(Qt6 COMPONENTS Gui REQUIRED CONFIG)
 find_package(Vulkan REQUIRED)
 
-qt_add_executable(hellovulkantriangle
+add_executable(hellovulkantriangle
     shared/trianglerenderer.cpp shared/trianglerenderer.h
     main.cpp
 )
