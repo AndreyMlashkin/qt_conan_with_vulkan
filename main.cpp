@@ -49,40 +49,91 @@
 ****************************************************************************/
 
 #include <QGuiApplication>
+#include <QApplication>
 #include <QVulkanInstance>
 #include <QLoggingCategory>
+#include <QWidget>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 #include "shared/trianglerenderer.h"
 
 Q_LOGGING_CATEGORY(lcVk, "qt.vulkan")
 
-class VulkanWindow : public QVulkanWindow
+
+class VulkanTestWindow : public QVulkanWindow
 {
 public:
-    QVulkanWindowRenderer *createRenderer() override;
+  VulkanTestWindow()
+    : instance(new QVulkanInstance())
+  {
+    instance->setLayers({ "VK_LAYER_KHRONOS_validation" });
+
+    if (!instance->create())
+      qFatal("Failed to create Vulkan instance: %d", instance->errorCode());
+
+    setVulkanInstance(instance);
+  }
+
+  QVulkanWindowRenderer *createRenderer() override;
+
+private:
+  QVulkanInstance* instance {nullptr};
 };
 
-QVulkanWindowRenderer *VulkanWindow::createRenderer()
+class WindowWrapper : public QWidget
 {
-    return new TriangleRenderer(this, true); // try MSAA, when available
+public:
+  WindowWrapper(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::Widget)
+    : QWidget(parent, f)
+  {
+    QVBoxLayout* layout = new QVBoxLayout(this);
+    layout->setSpacing(0);
+    layout->setContentsMargins(0, 0, 0, 0);
+  }
+
+  void addWindow(QWindow* w)
+  {
+    QWidget* wrappedWindow = QWidget::createWindowContainer(w);
+    addWidget(wrappedWindow);
+  }
+
+  void addWidget(QWidget* w)
+  {
+    layout()->addWidget(w);
+  }
+};
+
+QVulkanWindowRenderer *VulkanTestWindow::createRenderer()
+{
+  return new TriangleRenderer(this, true); // try MSAA, when available
 }
 
 int main(int argc, char *argv[])
 {
-    QGuiApplication app(argc, argv);
+  QApplication app(argc, argv);
 
-    QLoggingCategory::setFilterRules(QStringLiteral("qt.vulkan=true"));
+  QLoggingCategory::setFilterRules(QStringLiteral("qt.vulkan=true"));
 
-    QVulkanInstance inst;
-    inst.setLayers({ "VK_LAYER_KHRONOS_validation" });
+  WindowWrapper wrapper;
 
-    if (!inst.create())
-        qFatal("Failed to create Vulkan instance: %d", inst.errorCode());
+  // Widget
+  QWidget child;
+  child.setAutoFillBackground(true);
+  QPalette pal = child.palette();
+  pal.setColor(QPalette::Window, Qt::green);
+  child.setPalette(pal);
 
-    VulkanWindow w;
-    w.setVulkanInstance(&inst);
+  child.setMinimumSize(QSize(100,100));
 
-    w.resize(1024, 768);
-    w.show();
+  wrapper.addWidget(&child);
+  // End widget
 
-    return app.exec();
+  VulkanTestWindow vulkanChild;
+
+  wrapper.addWindow(&vulkanChild);
+  wrapper.setMinimumSize(QSize(500,500));
+
+  wrapper.show();
+
+  return app.exec();
 }

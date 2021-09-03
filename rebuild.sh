@@ -1,6 +1,6 @@
 mkdir build -p && \
 cd build && \
-conan install ../ && \
+conan install ../ --build missing && \
 cmake -S ../ -B . && \
 cmake --build .
 cd ..
