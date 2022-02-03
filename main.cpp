@@ -55,6 +55,7 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
+#include <memory>
 #include "shared/trianglerenderer.h"
 
 Q_LOGGING_CATEGORY(lcVk, "qt.vulkan")
@@ -114,26 +115,26 @@ int main(int argc, char *argv[])
 
   QLoggingCategory::setFilterRules(QStringLiteral("qt.vulkan=true"));
 
-  WindowWrapper wrapper;
+  std::shared_ptr<WindowWrapper> wrapper = std::make_shared<WindowWrapper>();
 
   // Widget
-  QWidget child;
-  child.setAutoFillBackground(true);
-  QPalette pal = child.palette();
+  std::shared_ptr<QWidget> greenWidget = std::make_shared<QWidget>();
+  greenWidget->setAutoFillBackground(true);
+  QPalette pal = greenWidget->palette();
   pal.setColor(QPalette::Window, Qt::green);
-  child.setPalette(pal);
+  greenWidget->setPalette(pal);
 
-  child.setMinimumSize(QSize(100,100));
+  greenWidget->setMinimumSize(QSize(100,100));
 
-  wrapper.addWidget(&child);
+  wrapper->addWidget(greenWidget.get());
   // End widget
 
-  VulkanTestWindow vulkanChild;
+  std::shared_ptr<VulkanTestWindow> vulkanChild = std::make_shared<VulkanTestWindow>();
 
-  wrapper.addWindow(&vulkanChild);
-  wrapper.setMinimumSize(QSize(500,500));
+  wrapper->addWindow(vulkanChild.get());
+  wrapper->setMinimumSize(QSize(500,500));
 
-  wrapper.show();
+  wrapper->show();
 
   return app.exec();
 }
