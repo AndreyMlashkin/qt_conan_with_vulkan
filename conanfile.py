@@ -23,7 +23,7 @@ class PictofitStudioConan(ConanFile):
                 self.info.settings.compiler.runtime = "MT/MTd"
 
     def requirements(self):
-        self.requires.add('qt/6.2.3')
+        self.requires.add('qt/6.2.4')
         self.options["qt"].shared = True
         self.options["qt"].with_vulkan = True
         self.options["qt"].qtsvg = True
